@@ -17,34 +17,40 @@ keyboard.add_hotkey('esc', exit)
 
 def next_letter():
     while True:
-        for letter in 'get rekt m8 lol xd 420 blaze it 69 ':
+        for letter in 'jitterbug ':
             yield letter
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
-time_to_wait = 5
-letter_generator = next_letter()
-def backspace_then_type():
+
+def open_notepad_and_type_jitterbug():
+    global done
+    # open notepad and type jitterbug
+    pyautogui.hotkey('win', 'r')
+    time.sleep(0.1)
+    pyautogui.typewrite('notepad')
+    time.sleep(0.1)
+    pyautogui.press('enter')
+    time.sleep(0.1)
     while True:
-        for letter in alphabet:
-            if keyboard.is_pressed(letter):
-                pyautogui.press('backspace')
-                current_letter = next(letter_generator)
-                print("\n\ncurrent letter:", current_letter)
-                pyautogui.keyDown(current_letter)
-                pyautogui.keyUp(current_letter)
-                time.sleep(0.1)
-                break
-        time.sleep(0.1)
+        for letter in next_letter():
+            if done:
+                return
+            time.sleep(0.1)
+            pyautogui.press(letter)
 
 pyautogui.FAILSAFE = True
 
 duration = 0.1
 distance = 1
 iterations = 0
+verbose = False
 
 def play_jitterbug_loop():
-    # play jitterbug_loop.wav
-    winsound.PlaySound('jitterbug.wav', winsound.SND_FILENAME)
+    global done
+    # play jitterbug_loop.wav on a loop with playsound module
+    while not done:
+        winsound.PlaySound('jitterbug_loop.wav', winsound.SND_FILENAME)
+
 
 done = False
 def jitterbug():
@@ -55,19 +61,21 @@ def jitterbug():
         time.sleep(0.1)
     # bump around the mouse cursor a little bit with pyautogui
     iterations = 0
+    slow_down = 1
     while not done:
-        time.sleep(random() / (iterations + 1) * 0.1)
-        print("jitterbug")
+        time.sleep((random() * 10) / (iterations + 1) * slow_down)
+        if verbose:
+            print('jitterbug', iterations)
         x_distance = int((random() - 0.5) * iterations)
         y_distance = int((random() - 0.5) * iterations)
         pyautogui.moveRel(x_distance, y_distance, duration=duration)
         iterations += 1
-        # if iterations goes to 100, start playing jitterbug.wav
-        if iterations == 100:
-            winsound.PlaySound('jitterbug.wav', winsound.SND_FILENAME)
-
+        song_start = 60
+        # if iterations goes to song_start, start playing the jitterbug loop
+        if iterations == song_start:
+            Thread(target=play_jitterbug_loop).start()
+notepad = False
 if __name__ == '__main__':
-    typing_thread = Thread(target=backspace_then_type)
-    typing_thread.start()
-    play_jitterbug_loop()
+    if notepad:
+        Thread(target=open_notepad_and_type_jitterbug).start()
     jitterbug()
