@@ -49,16 +49,19 @@ def play_jitterbug_loop():
     global done
     # play jitterbug_loop.wav on a loop with playsound module
     while not done:
-        winsound.PlaySound('jitterbug_loop.wav', winsound.SND_FILENAME)
+        winsound.PlaySound('notification.wav', winsound.SND_FILENAME)
 
 
 done = False
 def jitterbug():
     global done
-    # wait until the user moves their mouse
+    # wait ten seconds, then wait until the user moves the mouse
+    time.sleep(10)
     starting_position = pyautogui.position()
     while pyautogui.position() == starting_position:
         time.sleep(0.1)
+    if verbose:
+        print("Detected mouse movement")
     # bump around the mouse cursor a little bit with pyautogui
     iterations = 0
     slow_down = 1
@@ -70,7 +73,7 @@ def jitterbug():
         y_distance = int((random() - 0.5) * iterations)
         pyautogui.moveRel(x_distance, y_distance, duration=duration)
         iterations += 1
-        song_start = 60
+        song_start = 40
         # if iterations goes to song_start, start playing the jitterbug loop
         if iterations == song_start:
             Thread(target=play_jitterbug_loop).start()
